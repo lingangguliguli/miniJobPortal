@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/miniJobPortal/static/css/main.e6c13ad2.css",
+    "main.js": "/miniJobPortal/static/js/main.a3243f10.js",
+    "index.html": "/miniJobPortal/index.html",
+    "main.e6c13ad2.css.map": "/miniJobPortal/static/css/main.e6c13ad2.css.map",
+    "main.a3243f10.js.map": "/miniJobPortal/static/js/main.a3243f10.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.a3243f10.js"
+  ]
+}
