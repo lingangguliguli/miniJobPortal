@@ -1,21 +1,32 @@
 import React, { useState, useEffect } from 'react';
 
-const mockPosts = Array.from({ length: 20 }, (_, i) => ({
-  id: i + 1,
-  title: [
-    "Frontend Developer", "Backend Engineer", "Product Manager",
-    "UI/UX Designer", "Data Scientist", "DevOps Engineer",
-    "Full Stack Developer", "QA Engineer", "Android Developer",
-    "iOS Developer"
-  ][i % 10],
-  body: "Responsible for building and maintaining software solutions that meet business requirements and deliver great user experiences.",
-}));
+const roleNames = [
+  "Frontend Developer", "Backend Engineer", "Product Manager",
+  "UI/UX Designer", "Data Scientist", "DevOps Engineer",
+  "Full Stack Developer", "QA Engineer", "Android Developer",
+  "iOS Developer"
+];
+
+const jobDescription = "Responsible for building and maintaining software solutions that meet business requirements and deliver great user experiences.";
 
 const JobPortal = () => {
   const [jobs, setJobs] = useState([]);
-  const [savedJobs, setSavedJobs] = useState([]);
+  const [savedJobs, setSavedJobs] = useState(() => {
+    try {
+      const raw = localStorage.getItem('savedJobs');
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  });
   const [searchText, setSearchText] = useState('');
-  const [viewMode, setViewMode] = useState('All');
+  const [viewMode, setViewMode] = useState(() => {
+    try {
+      return localStorage.getItem('viewMode') || 'All';
+    } catch (e) {
+      return 'All';
+    }
+  });
 
   useEffect(() => {
     fetch('https://jsonplaceholder.typicode.com/posts')
@@ -23,16 +34,16 @@ const JobPortal = () => {
       .then(data => {
         const mappedJobs = data.map(post => ({
           id: post.id,
-          role: post.title,
-          description: post.body,
+          role: roleNames[(post.id - 1) % roleNames.length],
+          description: jobDescription,
         }));
         setJobs(mappedJobs);
       })
       .catch(() => {
-        const mappedJobs = mockPosts.map(post => ({
-          id: post.id,
-          role: post.title,
-          description: post.body,
+        const mappedJobs = Array.from({ length: 20 }, (_, i) => ({
+          id: i + 1,
+          role: roleNames[i % roleNames.length],
+          description: jobDescription,
         }));
         setJobs(mappedJobs);
       });
@@ -47,6 +58,18 @@ const JobPortal = () => {
   const handleRemoveSavedJob = (id) => {
     setSavedJobs(savedJobs.filter(job => job.id !== id));
   };
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('savedJobs', JSON.stringify(savedJobs));
+    } catch (e) {}
+  }, [savedJobs]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('viewMode', viewMode);
+    } catch (e) {}
+  }, [viewMode]);
 
   const displayedJobs = viewMode === 'All' ? jobs : savedJobs;
 
